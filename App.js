@@ -1,27 +1,61 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import PopularMovies from "./screens/PopularMovies";
-import MovieDetails from "./screens/MovieDetails";
-import MovieGridTile from "./components/ui/MovieGridTile";
-import AppLoader from "./components/ui/AppLoader";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import PopularMovies from "./screens/DiscoverMovies";
+import FavoritesScreen from "./screens/FavoritesScreen";
+import { Provider } from "react-redux";
+import { store } from "./store/redux/store";
+import { Ionicons } from "@expo/vector-icons";
+import MovieCard from "./components/ui/MovieCard";
+import MovieDetailsScreen from "./screens/MovieDetailsScreen";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
-function MovieStack() {
+function DrawerNavigator() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/* <Stack.Screen name="Movie Grid" component={MovieGridTile} /> */}
-        {/* <Stack.Screen name="loader" component={AppLoader} /> */}
-        <Stack.Screen name="PopularMovies" component={PopularMovies} />
-        <Stack.Screen name="MovieDetails" component={MovieDetails} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Drawer.Navigator>
+      <Drawer.Screen
+        name="Discover"
+        component={PopularMovies}
+        options={{
+          title: "Discover Movies",
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="film" color={color} size={size} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="star" color={color} size={size} />
+          ),
+        }}
+      />
+    </Drawer.Navigator>
   );
 }
 
 export default function App() {
-  return <MovieStack />;
+  return (
+    <>
+      <StatusBar style="dark" />
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="DrawerScreen"
+              component={DrawerNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="MovieDetails" component={MovieDetailsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </>
+  );
 }
